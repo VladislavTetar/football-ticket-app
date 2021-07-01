@@ -1,7 +1,7 @@
 package football.ticket.app.service;
 
-import football.ticket.app.model.Stadium;
 import java.util.List;
+import football.ticket.app.model.Stadium;
 
 public interface StadiumService {
     Stadium add(Stadium stadium);

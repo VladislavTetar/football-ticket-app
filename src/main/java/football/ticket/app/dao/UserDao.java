@@ -1,10 +1,12 @@
 package football.ticket.app.dao;
 
-import football.ticket.app.model.User;
 import java.util.Optional;
+import football.ticket.app.model.User;
 
-public interface UserDao extends GenericDao<User> {
+public interface UserDao {
+    User add(User user);
+
+    Optional<User> get(Long id);
+
     Optional<User> findByEmail(String email);
-
-    Optional<User> getById(Long userId);
 }

@@ -1,9 +1,10 @@
 package football.ticket.app.service.impl;
 
+import java.util.List;
 import football.ticket.app.dao.StadiumDao;
+import football.ticket.app.exception.DataProcessingException;
 import football.ticket.app.model.Stadium;
 import football.ticket.app.service.StadiumService;
-import java.util.List;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -21,7 +22,8 @@ public class StadiumServiceImpl implements StadiumService {
 
     @Override
     public Stadium get(Long id) {
-        return stadiumDao.get(id).get();
+        return stadiumDao.get(id).orElseThrow(
+                () -> new DataProcessingException("Can't get stadium by id " + id));
     }
 
     @Override

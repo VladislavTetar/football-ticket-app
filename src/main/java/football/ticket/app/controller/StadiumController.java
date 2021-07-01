@@ -1,14 +1,13 @@
 package football.ticket.app.controller;
 
-import football.ticket.app.model.Stadium;
-import football.ticket.app.model.dto.request.StadiumRequestDto;
-import football.ticket.app.model.dto.response.StadiumResponseDto;
-import football.ticket.app.service.StadiumService;
-import football.ticket.app.service.dto.mapping.DtoRequestMapper;
-import football.ticket.app.service.dto.mapping.DtoResponseMapper;
+import javax.validation.Valid;
 import java.util.List;
 import java.util.stream.Collectors;
-import javax.validation.Valid;
+import football.ticket.app.dto.request.StadiumRequestDto;
+import football.ticket.app.dto.response.StadiumResponseDto;
+import football.ticket.app.model.Stadium;
+import football.ticket.app.service.StadiumService;
+import football.ticket.app.service.mapper.StadiumMapper;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -19,29 +18,25 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/stadiums")
 public class StadiumController {
     private final StadiumService stadiumService;
-    private final DtoRequestMapper<StadiumRequestDto, Stadium> stadiumDtoRequestMapper;
-    private final DtoResponseMapper<StadiumResponseDto, Stadium> stadiumDtoResponseMapper;
+    private final StadiumMapper stadiumMapper;
 
     public StadiumController(StadiumService stadiumService,
-                             DtoRequestMapper<StadiumRequestDto, Stadium>
-                                     stadiumDtoRequestMapper,
-                             DtoResponseMapper<StadiumResponseDto, Stadium>
-                                     stadiumDtoResponseMapper) {
+                             StadiumMapper stadiumMapper) {
         this.stadiumService = stadiumService;
-        this.stadiumDtoRequestMapper = stadiumDtoRequestMapper;
-        this.stadiumDtoResponseMapper = stadiumDtoResponseMapper;
+        this.stadiumMapper = stadiumMapper;
     }
 
     @PostMapping
-    public StadiumResponseDto addStadium(@RequestBody @Valid StadiumRequestDto dto) {
-        Stadium stadium = stadiumService.add(stadiumDtoRequestMapper.fromDto(dto));
-        return stadiumDtoResponseMapper.toDto(stadium);
+    public StadiumResponseDto add(@RequestBody @Valid StadiumRequestDto requestDto) {
+        Stadium stadium = stadiumService.add(stadiumMapper.mapToModel(requestDto));
+        return stadiumMapper.mapToDto(stadium);
     }
 
     @GetMapping
-    public List<StadiumResponseDto> getAllStadium() {
-        return stadiumService.getAll().stream()
-                .map(stadiumDtoResponseMapper::toDto)
+    public List<StadiumResponseDto> getAll() {
+        return stadiumService.getAll()
+                .stream()
+                .map(stadiumMapper::mapToDto)
                 .collect(Collectors.toList());
     }
 }

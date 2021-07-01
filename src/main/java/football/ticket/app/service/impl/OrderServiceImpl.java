@@ -1,14 +1,13 @@
 package football.ticket.app.service.impl;
 
+import java.time.LocalDateTime;
+import java.util.List;
 import football.ticket.app.dao.OrderDao;
 import football.ticket.app.model.Order;
 import football.ticket.app.model.ShoppingCart;
 import football.ticket.app.model.User;
 import football.ticket.app.service.OrderService;
 import football.ticket.app.service.ShoppingCartService;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -24,11 +23,12 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public Order completeOrder(ShoppingCart shoppingCart) {
         Order order = new Order();
+        order.setOrderTime(LocalDateTime.now());
+        order.setTickets(shoppingCart.getTickets());
         order.setUser(shoppingCart.getUser());
-        order.setTickets(new ArrayList<>(shoppingCart.getTickets()));
-        order.setOrderDate(LocalDateTime.now());
-        shoppingCartService.clearShoppingCart(shoppingCart);
-        return orderDao.add(order);
+        orderDao.add(order);
+        shoppingCartService.clear(shoppingCart);
+        return order;
     }
 
     @Override

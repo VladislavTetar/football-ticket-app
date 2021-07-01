@@ -4,23 +4,15 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.Table;
+import java.util.Objects;
 
 @Entity
-@Table(name = "games")
 public class Game {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String title;
     private String description;
-
-    public Game() {
-    }
-
-    public Game(String title) {
-        this.title = title;
-    }
 
     public Long getId() {
         return id;
@@ -51,7 +43,26 @@ public class Game {
         return "Movie{"
                 + "id=" + id
                 + ", title='" + title + '\''
-                + ", description='" + description + '\''
-                + '}';
+                + ", description='" + description
+                + '\'' + '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        Game game = (Game) o;
+        return Objects.equals(id, game.id)
+                && Objects.equals(title, game.title)
+                && Objects.equals(description, game.description);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, title, description);
     }
 }
