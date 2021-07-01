@@ -6,17 +6,16 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
-import javax.persistence.Table;
+import javax.persistence.OneToOne;
 
 @Entity
-@Table(name = "tickets")
 public class Ticket {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @ManyToOne(fetch = FetchType.LAZY)
     private GameSession gameSession;
-    @ManyToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY)
     private User user;
 
     public Long getId() {
@@ -27,11 +26,11 @@ public class Ticket {
         this.id = id;
     }
 
-    public GameSession getGameSession() {
+    public GameSession getMovieSession() {
         return gameSession;
     }
 
-    public void setGameSession(GameSession gameSession) {
+    public void setMovieSession(GameSession gameSession) {
         this.gameSession = gameSession;
     }
 
@@ -46,9 +45,8 @@ public class Ticket {
     @Override
     public String toString() {
         return "Ticket{"
-                + " id=" + id
+                + "id=" + id
                 + ", movieSession=" + gameSession
-                + ", user=" + user
-                + '}';
+                + ", user=" + user + '}';
     }
 }

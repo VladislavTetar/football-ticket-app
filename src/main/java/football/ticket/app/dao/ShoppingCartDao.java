@@ -3,8 +3,10 @@ package football.ticket.app.dao;
 import football.ticket.app.model.ShoppingCart;
 import football.ticket.app.model.User;
 
-public interface ShoppingCartDao extends GenericDao<ShoppingCart> {
+public interface ShoppingCartDao {
+    ShoppingCart add(ShoppingCart shoppingCart);
+
     ShoppingCart getByUser(User user);
 
-    void update(ShoppingCart shoppingCart);
+    ShoppingCart update(ShoppingCart shoppingCart);
 }

@@ -1,9 +1,10 @@
 package football.ticket.app.service.impl;
 
+import java.util.List;
 import football.ticket.app.dao.GameDao;
+import football.ticket.app.exception.DataProcessingException;
 import football.ticket.app.model.Game;
 import football.ticket.app.service.GameService;
-import java.util.List;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -21,7 +22,8 @@ public class GameServiceImpl implements GameService {
 
     @Override
     public Game get(Long id) {
-        return gameDao.get(id).get();
+        return gameDao.get(id).orElseThrow(
+                () -> new DataProcessingException("Can't get game by id " + id));
     }
 
     @Override

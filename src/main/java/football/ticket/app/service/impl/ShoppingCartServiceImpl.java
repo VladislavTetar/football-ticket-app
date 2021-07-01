@@ -7,28 +7,26 @@ import football.ticket.app.model.ShoppingCart;
 import football.ticket.app.model.Ticket;
 import football.ticket.app.model.User;
 import football.ticket.app.service.ShoppingCartService;
-import java.util.ArrayList;
 import org.springframework.stereotype.Service;
 
 @Service
 public class ShoppingCartServiceImpl implements ShoppingCartService {
-    private final TicketDao ticketDao;
     private final ShoppingCartDao shoppingCartDao;
+    private final TicketDao ticketDao;
 
-    public ShoppingCartServiceImpl(TicketDao ticketDao,
-                                   ShoppingCartDao shoppingCartDao) {
-        this.ticketDao = ticketDao;
+    public ShoppingCartServiceImpl(ShoppingCartDao shoppingCartDao, TicketDao ticketDao) {
         this.shoppingCartDao = shoppingCartDao;
+        this.ticketDao = ticketDao;
     }
 
     @Override
     public void addSession(GameSession gameSession, User user) {
-        Ticket newTicket = new Ticket();
-        newTicket.setUser(user);
-        newTicket.setGameSession(gameSession);
-
+        Ticket ticket = new Ticket();
+        ticket.setMovieSession(gameSession);
+        ticket.setUser(user);
         ShoppingCart shoppingCart = shoppingCartDao.getByUser(user);
-        shoppingCart.getTickets().add(ticketDao.add(newTicket));
+        ticketDao.add(ticket);
+        shoppingCart.getTickets().add(ticket);
         shoppingCartDao.update(shoppingCart);
     }
 
@@ -45,8 +43,8 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
     }
 
     @Override
-    public void clearShoppingCart(ShoppingCart cart) {
-        cart.setTickets(new ArrayList<>());
-        shoppingCartDao.update(cart);
+    public void clear(ShoppingCart shoppingCart) {
+        shoppingCart.setTickets(null);
+        shoppingCartDao.update(shoppingCart);
     }
 }

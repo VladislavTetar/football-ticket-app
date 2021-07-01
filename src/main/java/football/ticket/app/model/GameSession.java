@@ -1,28 +1,22 @@
 package football.ticket.app.model;
 
-import java.time.LocalDateTime;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
-import javax.persistence.Table;
+import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "game_sessions")
 public class GameSession {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     private Game game;
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     private Stadium stadium;
     private LocalDateTime showTime;
-
-    public GameSession() {
-    }
 
     public Long getId() {
         return id;
@@ -32,19 +26,19 @@ public class GameSession {
         this.id = id;
     }
 
-    public Game getGame() {
+    public Game getMovie() {
         return game;
     }
 
-    public void setGame(Game game) {
+    public void setMovie(Game game) {
         this.game = game;
     }
 
-    public Stadium getStadium() {
+    public Stadium getCinemaHall() {
         return stadium;
     }
 
-    public void setStadium(Stadium stadium) {
+    public void setCinemaHall(Stadium stadium) {
         this.stadium = stadium;
     }
 
@@ -58,11 +52,10 @@ public class GameSession {
 
     @Override
     public String toString() {
-        return "GameSession{"
+        return "MovieSession{"
                 + "id=" + id
-                + ", game=" + game
-                + ", stadium=" + stadium
-                + ", showTime=" + showTime
-                + '}';
+                + ", movie=" + game
+                + ", cinemaHall=" + stadium
+                + ", showTime=" + showTime + '}';
     }
 }

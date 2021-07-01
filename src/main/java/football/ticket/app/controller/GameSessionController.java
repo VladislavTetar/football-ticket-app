@@ -1,15 +1,15 @@
 package football.ticket.app.controller;
 
-import football.ticket.app.model.GameSession;
-import football.ticket.app.model.dto.request.GameSessionRequestDto;
-import football.ticket.app.model.dto.response.GameSessionResponseDto;
-import football.ticket.app.service.GameSessionService;
-import football.ticket.app.service.dto.mapping.DtoRequestMapper;
-import football.ticket.app.service.dto.mapping.DtoResponseMapper;
+import javax.validation.Valid;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
-import javax.validation.Valid;
+import football.ticket.app.dto.request.GameSessionRequestDto;
+import football.ticket.app.dto.response.GameSessionResponseDto;
+import football.ticket.app.model.GameSession;
+import football.ticket.app.service.GameSessionService;
+import football.ticket.app.service.mapper.GameSessionMapper;
+import football.ticket.app.util.DateTimePatternUtil;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,49 +24,45 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/game-sessions")
 public class GameSessionController {
+    public static final String DATE_PATTERN = DateTimePatternUtil.DATE_PATTERN;
     private final GameSessionService gameSessionService;
-    private final DtoRequestMapper<GameSessionRequestDto, GameSession>
-            gameSessionDtoRequestMapper;
-    private final DtoResponseMapper<GameSessionResponseDto, GameSession>
-            gameSessionDtoResponseMapper;
+    private final GameSessionMapper gameSessionMapper;
 
     public GameSessionController(GameSessionService gameSessionService,
-                                 DtoRequestMapper<GameSessionRequestDto, GameSession>
-                                          dtoRequestMapper,
-                                 DtoResponseMapper<GameSessionResponseDto, GameSession>
-                                          dtoResponseMapper) {
+                                 GameSessionMapper gameSessionMapper) {
         this.gameSessionService = gameSessionService;
-        this.gameSessionDtoRequestMapper = dtoRequestMapper;
-        this.gameSessionDtoResponseMapper = dtoResponseMapper;
+        this.gameSessionMapper = gameSessionMapper;
     }
 
     @PostMapping
-    public GameSessionResponseDto addGameSession(@RequestBody @Valid GameSessionRequestDto dto) {
-        GameSession gameSession
-                = gameSessionService.add(gameSessionDtoRequestMapper.fromDto(dto));
-        return gameSessionDtoResponseMapper.toDto(gameSession);
+    public GameSessionResponseDto add(@RequestBody @Valid GameSessionRequestDto requestDto) {
+        GameSession gameSession = gameSessionMapper.mapToModel(requestDto);
+        gameSessionService.add(gameSession);
+        return gameSessionMapper.mapToDto(gameSession);
     }
 
     @GetMapping("/available")
-    public List<GameSessionResponseDto> getAllAvailableSessions(@RequestParam Long id,
-                                                                @RequestParam
-                                                          @DateTimeFormat(pattern = "dd.MM.yyyy")
-                                                            LocalDate date) {
-        return gameSessionService.findAvailableSessions(id, date).stream()
-                .map(gameSessionDtoResponseMapper::toDto)
+    public List<GameSessionResponseDto> getAll(@RequestParam Long movieId,
+                                               @RequestParam
+                                                @DateTimeFormat(pattern = DATE_PATTERN)
+                                                        LocalDate date) {
+        return gameSessionService.findAvailableSessions(movieId, date)
+                .stream()
+                .map(gameSessionMapper::mapToDto)
                 .collect(Collectors.toList());
     }
 
     @PutMapping("/{id}")
-    public void update(@PathVariable Long id,
-                       @RequestBody GameSessionRequestDto gameSessionRequestDto) {
-        GameSession gameSession = gameSessionDtoRequestMapper.fromDto(gameSessionRequestDto);
+    public GameSessionResponseDto update(@PathVariable Long id,
+                                         @RequestBody @Valid GameSessionRequestDto requestDto) {
+        GameSession gameSession = gameSessionMapper.mapToModel(requestDto);
         gameSession.setId(id);
         gameSessionService.update(gameSession);
+        return gameSessionMapper.mapToDto(gameSession);
     }
 
     @DeleteMapping("/{id}")
     public void delete(@PathVariable Long id) {
-        gameSessionService.remove(id);
+        gameSessionService.delete(id);
     }
 }
